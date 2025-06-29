@@ -5,23 +5,23 @@
 Network Working Group                                         C. Bormann
 Internet-Draft                                    Universität Bremen TZI
 Intended status: Informational                              Y. name here
-Expires: 30 December 2025                                   28 June 2025
+Expires: 31 December 2025                                   29 June 2025
 
 
-          Generating Numeric Map Labels from Readable CBOR EDN
+          CBOR: Generating Numeric Map Labels from Textual EDN
                   draft-bormann-cbor-edn-mapkey-latest
 
 Abstract
 
-   The Concise Binary Object Representation (CBOR, RFC 8949) is a data
-   format whose design goals include the possibility of extremely small
-   code size, fairly small message size, and extensibility without the
-   need for version negotiation.
+   The Concise Binary Object Representation (CBOR, STD 94 == RFC 8949)
+   is a data format whose design goals include the possibility of
+   extremely small code size, fairly small message size, and
+   extensibility without the need for version negotiation.
 
    CBOR diagnostic notation (EDN) is widely used to represent CBOR data
    items in a way that is accessible to humans, for instance for
    examples in a specification.  Complex examples often use nested maps,
-   the map keys (labels) of each of which are often sourced from
+   the map keys (labels) for each of which are often sourced from
    different specifications.  While the e'' application extension
    provides a way to import data items, particularly constant values,
    from a CDDL model, it does not help with automatically selecting the
@@ -30,15 +30,15 @@ Abstract
 
    // The present document is intended to capture ideas initially
    // discussed at the CBOR WG interim 2025-06-25 and demonstrate some
-   // design alternatives.  It is not ready for adoption in any way.
+   // design alternatives.  It is not ready for adoption yet in any way.
 
 About This Document
 
    This note is to be removed before publishing as an RFC.
 
-   The latest revision of this draft can be found at https://cbor-
-   wg.github.io/edn-e-ref/draft-ietf-cbor-edn-e-ref.html.  Status
-   information for this document may be found at
+   The latest revision of this draft can be found at
+   https://cabo.github.io/mapkey/draft-bormann-cbor-edn-mapkey.html.
+   Status information for this document may be found at
    https://datatracker.ietf.org/doc/draft-bormann-cbor-edn-mapkey/.
 
    Discussion of this document takes place on the cbor Working Group
@@ -47,7 +47,7 @@ About This Document
    https://www.ietf.org/mailman/listinfo/cbor/.
 
    Source for this draft and an issue tracker can be found at
-   https://github.com/cbor-wg/edn-e-ref.
+   https://github.com/cabo/mapkey.
 
 Status of This Memo
 
@@ -64,7 +64,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 30 December 2025.
+   This Internet-Draft will expire on 31 December 2025.
 
 Copyright Notice
 
@@ -83,7 +83,7 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  The mapkey'' application extension: importing map labels from
+   2.  The mapkey<<>> application extension: importing map labels from
            CDDL
      Problem
      Solution
@@ -97,22 +97,23 @@ Table of Contents
 
 1.  Introduction
 
-   (Please see abstract.)  [RFC8949] [I-D.ietf-cbor-edn-literals]
+   (Please see abstract.)  [STD94] [I-D.ietf-cbor-edn-literals]
    [I-D.ietf-cbor-edn-e-ref]
 
-2.  The mapkey'' application extension: importing map labels from CDDL
+2.  The mapkey<<>> application extension: importing map labels from CDDL
 
 Problem
 
    In diagnostic notation examples, authors often would prefer to use
-   text names in place of the integer map keys that are used in the
+   text names in place of the integer map keys that are used in a
    protocol message for efficiency.  While the e'' application extension
-   provides a way to associate integer data items with names, the
+   provides a way to associate names with integer data items, the
    protocol designer must be very careful to use the right name for the
-   kind of map that uses the integer key: Different specifications use
-   different integer numbers for a key of the same name, and even in a
-   single specification there may be homonyms that resolve to different
-   integer values in different kinds of maps.
+   kind of map that uses the integer key: Different specifications may
+   use different integer numbers for a key with the same textual name,
+   and even in a single specification there may be homonyms that resolve
+   to different integer values in different kinds of maps (e.g., in
+   [STD96], alg is represented by 1 in headers and by 3 in COSE_Key).
 
    For example, Figure 4 in Section 3.5.2 of [RFC9528] contains this
    example that employs nested maps:
@@ -137,8 +138,9 @@ Problem
    (sub) and 8 (cnf) are defined in [RFC8392] and [RFC8747],
    respectively.  Within cnf, the label for COSE_Key is also defined by
    [RFC8747], while the labels within that map are defined in Section 7
-   of RFC 9052 [STD96].  Map keys also often an extension point and
-   therefore also may require consulting an IANA registry.
+   of RFC 9052 [STD96].  Map keys are also often an extension point, and
+   obtaining their numeric values therefore also may require consulting
+   an IANA registry.
 
    The objective of the present proposal is that a specification writer
    could employ an EDN app-extension that allows the example to read a
@@ -164,18 +166,19 @@ Problem
 
 
    // Discussion: For use in EDN, the names need to be provided in some
-   CBOR form; in the example above, this is done in text strings; for
-   clarity, it could be done in a different way, e.g., as byte strings
-   or even an e'...'-like construct.
+   form that is a valid CBOR data item.  In the example above, this is
+   done in text strings; for increased clarity, it could be done in a
+   more eye-catching way, e.g., as single-quoted (byte) strings or even
+   in an e'...'-like construct.
 
 Solution
 
-   In many cases, the constants needed to clean up this example are
-   already available in a CDDL model, or could be easily made available
-   in this way.
+   In many cases, the constants needed to handle the numeric map labels
+   in this example are already available in a CDDL model, or could be
+   easily made available in this way.
 
    For the example used in this section, [RFC9781] provides CDDL for
-   [RFC8392] and [RFC8747], and [STD96] provides CDDL for its data
+   [RFC8392] and [RFC8747], and [STD96] provides CDDL for its own data
    types.  Note that, to remain useful with extension points where new
    map keys are defined regularly, there needs to be a way to reference
    IANA registries for the name-to-integer translation; this is a
@@ -215,7 +218,8 @@ Solution
 
    IANA is requested to make the following two assignments in the CBOR
    Diagnostic Notation Application-extension Identifiers registry
-   [IANA.cbor-diagnostic-notation]:
+   [IANA.cbor-diagnostic-notation] established by
+   [I-D.ietf-cbor-edn-literals]:
 
          +==================================+====================+
          | Application-extension Identifier | Description        |
@@ -227,17 +231,18 @@ Solution
                 Table 1: Additions to Application-extension
                             Identifier Registry
 
-   All entries the Change Controller "IETF" and the Reference "RFC-
+   All entries have the Change Controller "IETF" and the Reference "RFC-
    XXXX".
 
 
    // RFC Editor: please replace RFC-XXXX with the RFC number of this
-   // RFC, [IANA.cbor-diagnostic-notation] with a reference to the new
-   // registry group, and remove this note.
+   // RFC, [IANA.cbor-diagnostic-notation] with a reference to the
+   // registry group established by [I-D.ietf-cbor-edn-literals], and
+   // remove this note.
 
 4.  Security considerations
 
-   The security considerations of [RFC8610], [RFC8949],
+   The security considerations of [RFC8610], [STD94],
    [I-D.ietf-cbor-edn-literals] apply.
 
    TBD.
@@ -259,10 +264,14 @@ Solution
               JSON Data Structures", RFC 8610, DOI 10.17487/RFC8610,
               June 2019, <https://www.rfc-editor.org/rfc/rfc8610>.
 
-   [RFC8949]  Bormann, C. and P. Hoffman, "Concise Binary Object
+   [STD94]    Internet Standard 94,
+              <https://www.rfc-editor.org/info/std94>.
+              At the time of writing, this STD comprises the following:
+
+              Bormann, C. and P. Hoffman, "Concise Binary Object
               Representation (CBOR)", STD 94, RFC 8949,
               DOI 10.17487/RFC8949, December 2020,
-              <https://www.rfc-editor.org/rfc/rfc8949>.
+              <https://www.rfc-editor.org/info/rfc8949>.
 
 5.2.  Informative References
 
