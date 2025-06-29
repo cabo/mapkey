@@ -2,8 +2,8 @@
 v: 3
 
 title: >
-  Generating Numeric Map Labels from Readable CBOR EDN
-abbrev: EDN for Numeric Map Labels
+  CBOR: Generating Numeric Map Labels from Textual EDN
+abbrev: Numeric Map Labels from Textual EDN
 docname: draft-bormann-cbor-edn-mapkey-latest
 # date: 2025-06-28
 keyword:
@@ -31,7 +31,7 @@ author:
   - name: Your | name here
 
 normative:
-  RFC8949: cbor
+  STD94: cbor
   RFC8610: cddl
   I-D.ietf-cbor-edn-literals: edn
 informative:
@@ -47,7 +47,7 @@ informative:
 
 --- abstract
 
-The Concise Binary Object Representation (CBOR, RFC 8949) is a data
+The Concise Binary Object Representation (CBOR, STD 94 == RFC 8949) is a data
 format whose design goals include the possibility of extremely small
 code size, fairly small message size, and extensibility without the
 need for version negotiation.
@@ -55,7 +55,7 @@ need for version negotiation.
 CBOR diagnostic notation (EDN) is widely used to represent CBOR data
 items in a way that is accessible to humans, for instance for examples
 in a specification.
-Complex examples often use nested maps, the map keys (labels) of each
+Complex examples often use nested maps, the map keys (labels) for each
 of which are often sourced from different specifications.
 While the `e''` application extension provides a way to import data items,
 particularly constant values, from a CDDL model, it does not help with
@@ -64,7 +64,7 @@ position in the nested maps.
 
 [^status]: The present document is intended to capture ideas initially
     discussed at the CBOR WG interim 2025-06-25 and demonstrate some
-    design alternatives.  It is not ready for adoption in any way.
+    design alternatives.  It is not ready for adoption yet in any way.
 
 [^status]
 
@@ -76,21 +76,22 @@ Introduction        {#intro}
 (Please see abstract.)
 {{-cbor}} {{-edn}} {{-eref}}
 
-# The `mapkey''` application extension: importing map labels from CDDL
+# The `mapkey<<>>` application extension: importing map labels from CDDL
 
 ## Problem
 {:unnumbered}
 
 In diagnostic notation examples, authors often would prefer to use
-text names in place of the integer map keys that are used in the
+text names in place of the integer map keys that are used in a
 protocol message for efficiency.
 While the `e''` application extension provides a way to associate
-integer data items with names, the protocol designer must be very
+names with integer data items, the protocol designer must be very
 careful to use the right name for the kind of map that uses the
-integer key: Different specifications use different integer numbers
-for a key of the same name, and even in a single specification there
+integer key: Different specifications may use different integer numbers
+for a key with the same textual name, and even in a single specification there
 may be homonyms that resolve to different integer values in different
-kinds of maps.
+kinds of maps (e.g., in {{-cose}}, `alg` is represented by 1 in headers
+and by 3 in `COSE_Key`).
 
 For example, Figure 4 in {{Section 3.5.2 of -edhoc}} contains this
 example that employs nested maps:
@@ -114,12 +115,12 @@ To check this example, a human reviewer has to look up the integer
 labels in the specifications for the different maps employed and
 translate them to the names of the map keys defined for each type of
 map.
-The outer map is a CWT Claims Set (CCS), for which the labels 2 (sub)
-and 8 (cnf) are defined in {{-cwt}} and {{-pop}}, respectively.
-Within cnf, the label for COSE_Key is also defined by {{-pop}}, while
+The outer map is a CWT Claims Set (CCS), for which the labels 2 (`sub`)
+and 8 (`cnf`) are defined in {{-cwt}} and {{-pop}}, respectively.
+Within `cnf`, the label for `COSE_Key` is also defined by {{-pop}}, while
 the labels within that map are defined in {{Section 7 of RFC9052@-cose}}.
-Map keys also often an extension point and therefore also may require
-consulting an IANA registry.
+Map keys are also often an extension point, and obtaining their
+numeric values therefore also may require consulting an IANA registry.
 
 The objective of the present proposal is that a specification writer
 could employ an EDN app-extension that allows the example to read a
@@ -147,20 +148,21 @@ names for map values 1 ("OKP") and 4 ("X25519").
 
 [^Discussion]: Discussion:
 
-[^Discussion] For use in EDN, the names need to be provided in some CBOR form; in
-the example above, this is done in text strings; for clarity, it could
-be done in a different way, e.g., as byte strings or even an
-`e'...'`-like construct.
+[^Discussion] For use in EDN, the names need to be provided in some
+form that is a valid CBOR data item.
+In the example above, this is done in text strings; for increased
+clarity, it could be done in a more eye-catching way, e.g., as single-quoted (byte) strings or
+even in an `e'...'`-like construct.
 
 ## Solution
 {:unnumbered}
 
-In many cases, the constants needed to clean up this example are
-already available in a CDDL model, or could be easily made available
-in this way.
+In many cases, the constants needed to handle the numeric map labels
+in this example are already available in a CDDL model, or could be
+easily made available in this way.
 
 For the example used in this section, {{-uccs}} provides CDDL for {{-cwt}}
-and {{-pop}}, and {{-cose}} provides CDDL for its data types.
+and {{-pop}}, and {{-cose}} provides CDDL for its own data types.
 Note that, to remain useful with extension points where new map keys
 are defined regularly, there needs to be a way to reference
 IANA registries for the name-to-integer translation; this is a
@@ -203,20 +205,20 @@ IANA Considerations
 
 IANA is requested to make the following two assignments in the CBOR
 Diagnostic Notation Application-extension Identifiers
-registry \[IANA.cbor-diagnostic-notation]:
+registry \[IANA.cbor-diagnostic-notation] established by {{-edn}}:
 
 | Application-extension Identifier | Description                          |
 |----------------------------------+--------------------------------------|
 | mapkey                           | import map labels from external CDDL |
 {: #tab-iana title="Additions to Application-extension Identifier Registry"}
 
-All entries the Change Controller "IETF" and the Reference "RFC-XXXX".
+All entries have the Change Controller "IETF" and the Reference "RFC-XXXX".
 
 [^to-be-removed]
 
 [^to-be-removed]: RFC Editor: please replace RFC-XXXX with the RFC
     number of this RFC, \[IANA.cbor-diagnostic-notation] with a
-    reference to the new registry group, and remove this note.
+    reference to the registry group established by {{-edn}}, and remove this note.
 
 
 Security considerations
