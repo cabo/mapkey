@@ -5,7 +5,7 @@ title: >
   CBOR: Generating Numeric Map Labels from Textual EDN
 abbrev: Numeric Map Labels from Textual EDN
 docname: draft-bormann-cbor-edn-mapkey-latest
-# date: 2025-06-28
+date: 2025-06-29
 keyword:
   - CBOR EDN
   - References to CDDL numbers
@@ -28,7 +28,9 @@ author:
     country: Germany
     phone: +49-421-218-63921
     email: cabo@tzi.org
-  - name: Your | name here
+  - name: Christian Amsüss
+    country: Austria
+    email: christian@amsuess.com
 
 normative:
   STD94: cbor
