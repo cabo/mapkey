@@ -5,7 +5,7 @@ title: >
   CBOR: Generating Numeric Map Labels from Textual EDN
 abbrev: Numeric Map Labels from Textual EDN
 docname: draft-bormann-cbor-edn-mapkey-latest
-date: 2025-06-29
+date: 2026-03-01
 keyword:
   - CBOR EDN
   - References to CDDL numbers
