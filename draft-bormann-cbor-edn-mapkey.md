@@ -5,7 +5,7 @@ title: >
   CBOR: Generating Numeric Map Labels from Textual EDN
 abbrev: Numeric Map Labels from Textual EDN
 docname: draft-bormann-cbor-edn-mapkey-latest
-date: 2026-03-01
+# date: 2026-09-02
 keyword:
   - CBOR EDN
   - References to CDDL numbers
@@ -205,14 +205,15 @@ there is probably value in establishing a convention.
 IANA Considerations
 ==================
 
-IANA is requested to make the following two assignments in the CBOR
-Diagnostic Notation Application-extension Identifiers
-registry \[IANA.cbor-diagnostic-notation] established by {{-edn}}:
+IANA is requested to make the following assignment in the CBOR
+Diagnostic Notation App-extension Identifiers
+registry \[IANA.cbor-diagnostic-notation] established by {{Section 7.1
+of -edn}}:
 
-| Application-extension Identifier | Description                          |
-|----------------------------------+--------------------------------------|
-| mapkey                           | import map labels from external CDDL |
-{: #tab-iana title="Additions to Application-extension Identifier Registry"}
+| App-extension Identifier | Description                          |
+|--------------------------|--------------------------------------|
+| mapkey                   | import map labels from external CDDL |
+{: #tab-iana title="Additions to App-extension Identifier Registry"}
 
 All entries have the Change Controller "IETF" and the Reference "RFC-XXXX".
 
@@ -220,7 +221,8 @@ All entries have the Change Controller "IETF" and the Reference "RFC-XXXX".
 
 [^to-be-removed]: RFC Editor: please replace RFC-XXXX with the RFC
     number of this RFC, \[IANA.cbor-diagnostic-notation] with a
-    reference to the registry group established by {{-edn}}, and remove this note.
+    reference to the registry group established by {{Section 7.1 of
+    -edn}}, and remove this note.
 
 
 Security considerations
